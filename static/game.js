@@ -58,7 +58,7 @@ function place(x, player)
         if (space.childNodes[0].className == "blank")
         {
             var img = document.createElement("img");
-            img.src = player;
+            img.src = "static/" + player;
             space.innerHTML = "";
             space.appendChild(img);
             return true;
