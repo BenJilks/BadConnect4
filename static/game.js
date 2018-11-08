@@ -82,10 +82,13 @@ function get_space(x, y)
 function set(x, y, player)
 {
     var space = get_space(x, y);
-    var img = document.createElement("img");
-    img.src = "static/" + player;
-    space.innerHTML = "";
-    space.appendChild(img);
+    if (space.childNodes[0].className == "blank")
+    {
+        var img = document.createElement("img");
+        img.src = "static/" + player;
+        space.innerHTML = "";
+        space.appendChild(img);
+    }
 }
 
 function place(x, player)

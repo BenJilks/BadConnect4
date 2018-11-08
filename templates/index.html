@@ -2,14 +2,20 @@
 
     <head>
         <title>Game Manager</title>
+        <link rel="stylesheet" type="text/css" href="static/style.css">
     </head>
 
     <body>
-        <form action="/join" method="POST">
-            Enter your name: <input name="name"/><br>
-            Enter game name: <input name="lobby"/><br>
-            <button type="submit">Join/Create</button>
-        </form>
+        <div class="menu">
+            <form action="/join" method="POST">
+                <h1>Shitty Connect4</h1>
+                <h2>Username</h2> 
+                <input name="name"/><br>
+                <h2>Game Name</h2>
+                <input name="lobby"/><br>
+                <button type="submit">Join or Create</button>
+            </form>
+        </div>
     </body>
 
 </html>

@@ -2,13 +2,16 @@
 
     <head>
         <title>{{ lobby }}</title>
+        <link rel="stylesheet" type="text/css" href="static/style.css">
         <script src="static/lobby.js"></script>
     </head>
 
     <body>
-        <h1> {{ lobby }}'s Game Lobby </h1>
-        <p id="player_list"></p>
-        <button onclick="send_start()">Start Game</button>
+        <div class="menu">
+            <h1>{{ lobby }}'s Game Lobby:</h1>
+            <h2 id="player_list"></h2>
+            <button onclick="send_start()" style="margin-left:50%;transform: translate(-50%)">Start Game</button>
+        </div>
     </body>
 
     <script>init();</script>
