@@ -1,5 +1,6 @@
 
 var table;
+var last_turn = -1;
 const width = 7;
 const height = 6;
 
@@ -21,26 +22,43 @@ function init()
         }
         table.appendChild(row);
     }
+
+    setInterval(update, 100);
 }
 
 function request(page, callback)
 {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = () => {
-        if (this.readyState == 4 && this.status == 200) {
-            callback(this.responseText);
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            callback(xhttp.responseText);
         }
     };
     xhttp.open("GET", page, true);
     xhttp.send();
 }
 
+function update()
+{
+    request("/curr_turn", (data) => {
+        if (data != "false")
+        {
+            var info = JSON.parse(data);
+            if (last_turn != info["last_turn"] && info["is_turn"])
+            {
+                last_turn = info["last_turn"];
+                place(last_turn, "yellow.png");
+            }
+        }
+    });
+}
+
 function column_click(id)
 {
-    request("/place/" + id, () => {
-        
+    request("/place/" + id, (data) => {
+        if (data == "true")
+            place(id, "red.png");
     });
-    place(id, "red.png");
 }
 
 function get_space(x, y)

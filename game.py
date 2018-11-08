@@ -1,10 +1,31 @@
 
 # Stores and handles data about one game
 class Game:
-    def __init__(self, players):
-        self.__players = players
+    def __init__(self, name):
+        self.__name = name
+        self.__players = []
+        self.__is_lobby = True
         self.__turn = 0
+        self.__last_turn = -1
     
+    def get_name(self):
+        return self.__name
+    
+    def get_players(self):
+        return self.__players
+
+    # Adds a new player to the game
+    def add_player(self, player):
+        return self.__players.append(player)
+
+    # Returns if the game has started
+    def has_started(self):
+        return not self.__is_lobby
+    
+    # Starts the game
+    def start_game(self):
+        self.__is_lobby = False
+
     # Returns if a player is in this game
     def is_game(self, player):
         return player in self.__players
@@ -13,68 +34,42 @@ class Game:
     def is_turn(self, player):
         return player == self.__players[self.__turn]
     
+    def played_turn(self):
+        return self.__last_turn
+    
     # Sets the next turn
-    def next_turn(self):
+    def next_turn(self, turn):
+        self.__last_turn = turn
         self.__turn = (self.__turn + 1) % len(self.__players)
-
-# All players about to join a game go into a lobby first
-class Lobby:
-    def __init__(self, name):
-        self.__name = name
-        self.__players = []
-    
-    # Adds a player to a lobby
-    def add_player(self, player):
-        self.__players.append(player)
-    
-    # Returns if a player is in this lobby
-    def is_lobby(self, player):
-        return player in self.__players
-
-    # Returns the list of players in the lobby
-    def get_players(self):
-        return self.__players
-    
-    # Returns the lobby name
-    def get_name(self):
-        return self.__name
 
 # Manages all current games
 class GameManager:
     def __init__(self):
         self.__games = []
-        self.__lobbies = []
+        self.__players = {}
     
     # Joins a player to a lobby by it's name, 
     # if the lobby does not exist then create it
     def join_lobby(self, lobby_name, player):
         # Find a lobby with that name
-        for lobby in self.__lobbies:
-            if lobby.get_name() == lobby_name:
-                lobby.add_player(player)
-                return lobby
+        for game in self.__games:
+            if game.get_name() == lobby_name:
+                game.add_player(player)
+                return game
         
         # If no lobby could be found, make one
-        lobby = Lobby(lobby_name)
-        lobby.add_player(player)
-        self.__lobbies.append(lobby)
-        return lobby
+        game = Game(lobby_name)
+        game.add_player(player)
+        self.__games.append(game)
+        return game
 
     # Start the game of the lobby the player is in
     def start_game(self, player):
-        curr_lobby = None
-        for lobby in self.__lobbies:
-            if lobby.is_lobby(player):
-                curr_lobby = lobby
-                break
-        
-        if curr_lobby == None:
+        game = self.get_game(player)
+        if game == None:
             return False
         
-        # Create a new game and remove the lobby
-        game = Game(curr_lobby.get_players())
-        self.__games.append(game)
-        self.__lobbies.remove(curr_lobby)
+        game.start_game()
         return True
     
     # Returns the current game of a player
@@ -83,3 +78,11 @@ class GameManager:
             if game.is_game(player):
                 return game
         return None
+    
+    # Registers a new player under a name
+    def register_player(self, player, name):
+        self.__players[player] = name
+    
+    # Returns the name of a player
+    def player_name(self, player):
+        return self.__players[player]

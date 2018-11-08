@@ -2,10 +2,15 @@
 
     <head>
         <title>{{ lobby }}</title>
+        <script src="static/lobby.js"></script>
     </head>
 
     <body>
         <h1> {{ lobby }}'s Game Lobby </h1>
+        <p id="player_list"></p>
+        <button onclick="send_start()">Start Game</button>
     </body>
+
+    <script>init();</script>
 
 </html>
