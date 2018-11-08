@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from game import *
+from connect4 import *
 import json
 app = Flask(__name__)
 game_manager = GameManager()
@@ -32,28 +33,36 @@ def lobby_info():
         for player in players:
             names.append(game_manager.player_name(player))
         return json.dumps({'players': names, 'started': has_started})
-    return '404'
+    return 'false'
 
 @app.route('/start_game')
 def start_game():
     player = request.remote_addr
     lobby = game_manager.get_game(player)
     if lobby != None:
-        lobby.start_game()
+        lobby.start_game(Board(lobby.get_players()))
 
 @app.route('/game')
 def game():
-    return render_template('game.html')
+    player = request.remote_addr
+    game = game_manager.get_game(player)
+    if game == None:
+        return "You're not in a game!"
+    
+    board = game.get_game()
+    colour = board.player_colour(player)
+    return render_template('game.html', colour=colour)
 
 @app.route('/place/<x>')
 def place(x):
     player = request.remote_addr
     game = game_manager.get_game(player)
     if game != None:
-        if game.is_turn(player):    
-            game.next_turn(x)
-            return "true"
-    
+        board = game.get_game()
+        if game.is_turn(player):
+            if board.place(int(x), player):
+                game.next_turn()
+                return "true"
     return "false"
 
 @app.route('/curr_turn')
@@ -61,9 +70,13 @@ def curr_turn():
     player = request.remote_addr
     game = game_manager.get_game(player)
     if game != None:
-        is_turn = game.is_turn(player)
-        last_turn = game.played_turn()
-        return json.dumps({'is_turn': is_turn, 'last_turn': last_turn})
+        if (game.is_turn(player)):
+            turn_text = "your turn:"
+        else:
+            turn_text = game_manager.player_name(game.curr_player()) + "'s turn:"
+        
+        board_data = game.get_game().get_data()
+        return json.dumps({'turn_text': turn_text, 'data': board_data})
     return "false"
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 
-var table;
+var table, turn;
 var last_turn = -1;
 const width = 7;
 const height = 6;
@@ -7,6 +7,8 @@ const height = 6;
 function init()
 {
     table = document.getElementById("table");
+    turn = document.getElementById("turn");
+
     for (var i = 0; i < height; i++)
     {
         var row = document.createElement("tr");
@@ -23,7 +25,8 @@ function init()
         table.appendChild(row);
     }
 
-    setInterval(update, 100);
+    update();
+    setInterval(update, 500);
 }
 
 function request(page, callback)
@@ -44,11 +47,19 @@ function update()
         if (data != "false")
         {
             var info = JSON.parse(data);
-            if (last_turn != info["last_turn"] && info["is_turn"])
+            var board = info["data"];
+            for (var y = 0; y < height; y++)
             {
-                last_turn = info["last_turn"];
-                place(last_turn, "yellow.png");
+                for (var x = 0; x < width; x++)
+                {
+                    var p = board[y][x];
+                    if (p != null)
+                        set(x, y, p);
+                }
             }
+
+            var turn_text = info["turn_text"];
+            turn.innerHTML = turn_text;
         }
     });
 }
@@ -57,7 +68,7 @@ function column_click(id)
 {
     request("/place/" + id, (data) => {
         if (data == "true")
-            place(id, "red.png");
+            place(id, player_colour);
     });
 }
 
@@ -68,20 +79,24 @@ function get_space(x, y)
     return space;
 }
 
+function set(x, y, player)
+{
+    var space = get_space(x, y);
+    var img = document.createElement("img");
+    img.src = "static/" + player;
+    space.innerHTML = "";
+    space.appendChild(img);
+}
+
 function place(x, player)
 {
-    for (var i = height - 1; i >= 0; i--)
+    for (var y = height - 1; y >= 0; y--)
     {
-        var space = get_space(x, i);
+        var space = get_space(x, y);
         if (space.childNodes[0].className == "blank")
         {
-            var img = document.createElement("img");
-            img.src = "static/" + player;
-            space.innerHTML = "";
-            space.appendChild(img);
-            return true;
+            set(x, y, player);
+            break;
         }
     }
-
-    return false;
 }

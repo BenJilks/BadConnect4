@@ -25,11 +25,13 @@
                 height: 80px;
             }
         </style>
+        <script>var player_colour = "{{ colour }}";</script>
         <script src="static/game.js"></script>
     </head>
 
     <body>
         <h1 class="title">Really shitty connect4</h1>
+        <h2 class="title" id="turn"></h2>
         <table class="board" id="table"></table>
     </body>
 
