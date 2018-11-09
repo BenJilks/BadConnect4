@@ -1,8 +1,6 @@
 
 var table, turn;
 var last_turn = -1;
-const width = 7;
-const height = 6;
 
 function init()
 {

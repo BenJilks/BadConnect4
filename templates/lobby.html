@@ -9,7 +9,13 @@
     <body>
         <div class="menu">
             <h1>{{ lobby }}'s Game Lobby:</h1>
-            <h2 id="player_list"></h2>
+            <h2 id="player_list">test<br>idk</h2>
+            <br>
+            <div style="margin-left: 50%; transform: translate(-50%); width:100%;">
+                <h2 style="display: inline">Board Size</h2>
+                <input style="width: 70px;" value="6" type="number" id="width" /> x 
+                <input style="width: 70px;" value="7" type="number" id="height" />
+            </div>
             <button onclick="send_start()" style="margin-left:50%;transform: translate(-50%)">Start Game</button>
         </div>
     </body>

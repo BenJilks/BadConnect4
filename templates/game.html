@@ -25,7 +25,11 @@
                 height: 80px;
             }
         </style>
-        <script>var player_colour = "{{ colour }}";</script>
+        <script>
+            var player_colour = "{{ colour }}";
+            const width = {{ width }};
+            const height = {{ height }};
+        </script>
         <script src="static/game.js"></script>
     </head>
 

@@ -35,12 +35,17 @@ def lobby_info():
         return json.dumps({'players': names, 'started': has_started})
     return 'false'
 
-@app.route('/start_game')
-def start_game():
+@app.route('/start_game/<width>/<height>')
+def start_game(width, height):
+    width = int(width)
+    height = int(height)
     player = request.remote_addr
     lobby = game_manager.get_game(player)
     if lobby != None:
-        lobby.start_game(Board(lobby.get_players()))
+        board = Board(lobby.get_players(), width, height)
+        lobby.start_game(board)
+        return "true"
+    return "false"
 
 @app.route('/game')
 def game():
@@ -51,7 +56,8 @@ def game():
     
     board = game.get_game()
     colour = board.player_colour(player)
-    return render_template('game.html', colour=colour)
+    return render_template('game.html', colour=colour, 
+        width=board.get_width(), height=board.get_height())
 
 @app.route('/place/<x>')
 def place(x):

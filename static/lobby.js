@@ -1,9 +1,12 @@
 
 var player_list;
+var width, height;
 
 function init()
 {
     player_list = document.getElementById("player_list");
+    width = document.getElementById("width");
+    height = document.getElementById("height");
     update();
     setInterval(update, 1000);
 }
@@ -28,8 +31,9 @@ function start_game()
 
 function send_start()
 {
-    request("/start_game", (data) => {
-        start_game();
+    request("/start_game/" + width.value + "/" + height.value, (data) => {
+        if (data != "false")
+            start_game();
     });
 }
 
