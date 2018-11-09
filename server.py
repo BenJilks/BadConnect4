@@ -11,14 +11,19 @@ def index():
     print('New player: ' + player)
     return render_template('index.html')
 
-@app.route('/join', methods=['POST'])
+@app.route('/join', methods=['POST', 'GET'])
 def join():
-    data = request.form
     player = request.remote_addr
-    name = data['name']
-    lobby_name = data['lobby']
-    game_manager.register_player(player, name)
-    game_manager.join_lobby(lobby_name, player)
+    if request.method == 'POST':
+        data = request.form
+        name = data['name']
+        lobby_name = data['lobby']
+        game_manager.register_player(player, name)
+        game_manager.join_lobby(lobby_name, player)
+    elif request.method == 'GET':
+        game = game_manager.get_game(player)
+        lobby_name = game.get_name()
+    
     return render_template('lobby.html', lobby=lobby_name)
 
 @app.route('/lobby_info')
@@ -35,15 +40,17 @@ def lobby_info():
         return json.dumps({'players': names, 'started': has_started})
     return 'false'
 
-@app.route('/start_game/<width>/<height>')
-def start_game(width, height):
+@app.route('/start_game/<width>/<height>/<connect>')
+def start_game(width, height, connect):
     width = int(width)
     height = int(height)
+    connect = int(connect)
     player = request.remote_addr
     lobby = game_manager.get_game(player)
     if lobby != None:
-        board = Board(lobby.get_players(), width, height)
-        lobby.start_game(board)
+        if not lobby.has_started():
+            board = Board(lobby.get_players(), width, height, connect)
+            lobby.start_game(board)
         return "true"
     return "false"
 
@@ -81,8 +88,18 @@ def curr_turn():
         else:
             turn_text = game_manager.player_name(game.curr_player()) + "'s turn:"
         
-        board_data = game.get_game().get_data()
-        return json.dumps({'turn_text': turn_text, 'data': board_data})
+        baord = game.get_game()
+        board_data = baord.get_data()
+        has_won = baord.has_won()
+        if has_won != None:
+            if has_won == player:
+                has_won = "you"
+            else:
+                has_won = game_manager.player_name(has_won)
+            game.end_game()
+
+        return json.dumps({'turn_text': turn_text, 'data': board_data, 
+            'has_won': has_won})
     return "false"
 
 if __name__ == '__main__':

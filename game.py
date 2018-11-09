@@ -19,7 +19,10 @@ class Game:
 
     # Adds a new player to the game
     def add_player(self, player):
-        return self.__players.append(player)
+        self.__players.append(player)
+    
+    def remove_player(self, player):
+        self.__players.remove(player)
 
     # Returns if the game has started
     def has_started(self):
@@ -29,6 +32,9 @@ class Game:
     def start_game(self, game):
         self.__is_lobby = False
         self.__game = game
+    
+    def end_game(self):
+        self.__is_lobby = True
 
     # Returns if a player is in this game
     def is_game(self, player):
@@ -53,6 +59,12 @@ class GameManager:
     
     # Joins a player to a lobby by it's name
     def join_lobby(self, lobby_name, player):
+        # If the player is already in a game
+        curr_game = self.get_game(player)
+        while curr_game != None:
+            curr_game.remove_player(player)
+            curr_game = self.get_game(player)
+
         # Find a lobby with that name
         for game in self.__games:
             if game.get_name() == lobby_name:

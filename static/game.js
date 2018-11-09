@@ -24,7 +24,7 @@ function init()
     }
 
     update();
-    setInterval(update, 500);
+    setInterval(update, 300);
 }
 
 function request(page, callback)
@@ -58,6 +58,13 @@ function update()
 
             var turn_text = info["turn_text"];
             turn.innerHTML = turn_text;
+
+            var has_won = info["has_won"];
+            if (has_won != null)
+            {
+                alert(has_won + " won!");
+                window.location = "/join";
+            }
         }
     });
 }
