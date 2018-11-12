@@ -56,14 +56,11 @@ class GameManager:
     def __init__(self):
         self.__games = []
         self.__players = {}
-    
+
     # Joins a player to a lobby by it's name
     def join_lobby(self, lobby_name, player):
         # If the player is already in a game
-        curr_game = self.get_game(player)
-        while curr_game != None:
-            curr_game.remove_player(player)
-            curr_game = self.get_game(player)
+        self.leave_lobby(player)
 
         # Find a lobby with that name
         for game in self.__games:
@@ -74,7 +71,14 @@ class GameManager:
         game = Game(lobby_name)
         game.add_player(player)
         self.__games.append(game)
-        return game        
+        return game
+    
+    # Remove a player from all lobbies
+    def leave_lobby(self, player):
+        curr_game = self.get_game(player)
+        while curr_game != None:
+            curr_game.remove_player(player)
+            curr_game = self.get_game(player)
 
     # Start the game of the lobby the player is in
     def start_game(self, player, game_data):

@@ -25,10 +25,12 @@
                 height: 80px;
             }
         </style>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
         <script>
-            var player_colour = "{{ colour }}";
+            const player_colour = "{{ colour }}";
             const width = {{ width }};
             const height = {{ height }};
+            const player_name = "{{ name }}";
         </script>
         <script src="static/game.js"></script>
     </head>
