@@ -1,0 +1,29 @@
+
+.card {
+    position: absolute;
+    background: #fdfdfd;
+    box-shadow: 6px 6px 2px #00000022;
+    border-radius: 10px;
+    width: 80px;
+    height: 130px;
+    user-select: none;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    -webkit-user-drag: none;
+}
+
+.card #top {
+    position: absolute;
+    top: 6px;
+    left: 3px;
+}
+
+.card #bottom {
+    position: absolute;
+    top: 100%;
+    left: 100%;
+    transform: translate(-17px, -21px) rotate(180deg);
+}

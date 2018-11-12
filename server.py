@@ -38,8 +38,8 @@ def lobby():
     
     return render_template('lobby.html', lobby=lobby_name)
 
-@app.route('/game')
-def game():
+@app.route('/connect4')
+def connect4():
     player = request.remote_addr
     game = game_manager.get_game(player)
     if game == None:
@@ -48,11 +48,19 @@ def game():
     board = game.get_game()
     colour = board.player_colour(player)
     name = game_manager.player_name(player)
-    return render_template('game.html', 
+    return render_template('connect4.html', 
         colour=colour, 
         width=board.get_width(), 
         height=board.get_height(), 
         name=name, secure=False)
+
+@app.route('/cards')
+def cards():
+    player = request.remote_addr
+    game = game_manager.get_game(player)
+    #if game == None:
+    #    return "You're not in a game!"
+    return render_template('cards.html')
 
 @socketio.on('join')
 def join(lobby_name):
@@ -69,8 +77,20 @@ def join(lobby_name):
     join_room(lobby_name)
     update_players(lobby)
 
-@socketio.on('start_game')
-def start_game(width, height, connect):
+def create_player_list(lobby):
+    player_list = ''
+    for player in lobby.get_players():
+        player_list += html_escape(game_manager.player_name(player)) + '<br>'
+    return player_list
+
+def update_players(lobby):
+    player_list = create_player_list(lobby)
+    socketio.send(player_list, room=lobby.get_name())
+
+# Connect4
+
+@socketio.on('start_connect4')
+def start_connect4(width, height, connect):
     player = request.remote_addr
     lobby = game_manager.get_game(player)
 
@@ -78,10 +98,10 @@ def start_game(width, height, connect):
     height = int(height)
     connect = int(connect)
     if not lobby.has_started():
-        print('starting game', lobby.get_name())
+        print('starting connect4', lobby.get_name())
         board = Board(lobby.get_players(), width, height, connect)
         lobby.start_game(board)
-        emit('goto_game', room=lobby.get_name())
+        emit('goto_game', '/connect4', room=lobby.get_name())
 
 @socketio.on('game_started')
 def game_started():
@@ -115,15 +135,17 @@ def send_board_update(game, player):
     data = {'data': board.get_data(), 'turn_text': turn_text, 'has_won': has_won}
     socketio.send(json.dumps(data), json=True, room=game.get_name())
 
-def create_player_list(lobby):
-    player_list = ''
-    for player in lobby.get_players():
-        player_list += html_escape(game_manager.player_name(player)) + '<br>'
-    return player_list
+# Cards
 
-def update_players(lobby):
-    player_list = create_player_list(lobby)
-    socketio.send(player_list, room=lobby.get_name())
+@socketio.on('start_cards')
+def start_cards():
+    player = request.remote_addr
+    lobby = game_manager.get_game(player)
+
+    if not lobby.has_started():
+        print('starting cards', lobby.get_name())
+        lobby.start_game(None)
+        emit('goto_game', '/cards', room=lobby.get_name())
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port='80')

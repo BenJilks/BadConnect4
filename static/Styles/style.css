@@ -1,5 +1,5 @@
 body {
-    background-image: url("../static/background.png");
+    background-image: url("../background.png");
 }
 
 .menu {
@@ -48,4 +48,37 @@ body {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.setting {
+    margin-left: 50%; 
+    transform: translate(-50%); 
+    width:100%;
+}
+
+.setting h2 {
+    display: inline;
+}
+
+select {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -webkit-padding-end: 20px;
+    -moz-padding-end: 20px;
+    -webkit-padding-start: 2px;
+    -moz-padding-start: 2px;
+    background-color: #FFF; /* fallback color if gradients are not supported */
+    border: 1px solid #AAA;
+    border-radius: 2px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    color: #555;
+    font-size: inherit;
+    margin: 0;
+    overflow: hidden;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
