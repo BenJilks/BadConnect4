@@ -1,6 +1,6 @@
 import random
 
-class Board:
+class Connect4Board:
     def __init__(self, players, width, height, connect):
         self.__width = width
         self.__height = height

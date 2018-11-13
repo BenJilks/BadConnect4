@@ -9,7 +9,7 @@ function init()
     socket.on('connect', function()
     {
         console.log('connected');
-        socket.emit('game_started');
+        socket.emit('game_started_connect4');
     });
 
     socket.on('json', function (data)

@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import GameManager
-from connect4 import Board
+from connect4 import Connect4Board
+from cards import CardStack
 import json
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -58,9 +59,9 @@ def connect4():
 def cards():
     player = request.remote_addr
     game = game_manager.get_game(player)
-    #if game == None:
-    #    return "You're not in a game!"
-    return render_template('cards.html')
+    if game == None:
+        return "You're not in a game!"    
+    return render_template('cards.html', player=player)
 
 @socketio.on('join')
 def join(lobby_name):
@@ -99,12 +100,12 @@ def start_connect4(width, height, connect):
     connect = int(connect)
     if not lobby.has_started():
         print('starting connect4', lobby.get_name())
-        board = Board(lobby.get_players(), width, height, connect)
+        board = Connect4Board(lobby.get_players(), width, height, connect)
         lobby.start_game(board)
-        emit('goto_game', '/connect4', room=lobby.get_name())
+    emit('goto_game', '/connect4', room=lobby.get_name())
 
-@socketio.on('game_started')
-def game_started():
+@socketio.on('game_started_connect4')
+def game_started_connect4():
     player = request.remote_addr
     game = game_manager.get_game(player)
     join_room(game.get_name())
@@ -144,8 +145,58 @@ def start_cards():
 
     if not lobby.has_started():
         print('starting cards', lobby.get_name())
-        lobby.start_game(None)
+        cards = CardStack(lobby.get_players())
+        lobby.start_game(cards)
         emit('goto_game', '/cards', room=lobby.get_name())
+
+@socketio.on('game_started_cards')
+def game_started_cards():
+    player = request.remote_addr
+    game = game_manager.get_game(player)
+    join_room(game.get_name())
+
+    player_data = []
+    for p in game.get_players():
+        if p != player:
+            name = game_manager.player_name(p)
+            player_data.append({'name': name, 'id': p})
+
+    cards = game.get_game()
+    data = json.dumps({'for': player, 'data': cards.get_stack_data(player), 
+        'players': player_data})
+    emit('reset_cards', data, room=game.get_name())
+    print('Reset', player, 'cards')
+
+@socketio.on('draw_card')
+def draw_card():
+    player = request.remote_addr
+    game = game_manager.get_game(player)
+    if game != None:
+        cards = game.get_game()
+        card = cards.draw_card(player)
+        data = json.dumps({'for': player, 'card': card.get_json_data()})
+        emit('give_card', data, room=game.get_name())
+        print('Gave player', player, 'card', card.get_id())
+
+@socketio.on('update_position')
+def update_position(card_id, x, y):
+    player = request.remote_addr
+    game = game_manager.get_game(player)
+    if game != None:
+        cards = game.get_game()
+        cards.update_card_pos(player, card_id, x, y)
+        print('Updated card', card_id, 'position to', x, y)
+
+@socketio.on('give_card_to')
+def give_card_to(card_id, to):
+    player = request.remote_addr
+    game = game_manager.get_game(player)
+    if game != None:
+        cards = game.get_game()
+        card = cards.give(player, card_id, to)
+        data = json.dumps({'for': to, 'card': card.get_json_data()})
+        emit('give_card', data, room=game.get_name())
+        print('Gave card', card_id, 'from', player, 'to', to)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port='80')

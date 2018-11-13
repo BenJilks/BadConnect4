@@ -27,3 +27,18 @@
     left: 100%;
     transform: translate(-17px, -21px) rotate(180deg);
 }
+
+.give_area {
+    position: fixed;
+    height: 100%;
+    width: 200px;
+    top: 0px;
+    right: 0px;
+}
+
+.give_area tr {
+    background-color: #FF000022;
+    width: 100%;
+    height: auto;
+    text-align: center;
+}
