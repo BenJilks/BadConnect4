@@ -7,6 +7,7 @@ class Card:
         self.__id = id
         self.__x = 0
         self.__y = 0
+        self.__back = False
     
     def get_set(self):
         return self.__set
@@ -17,16 +18,18 @@ class Card:
     def get_id(self):
         return self.__id
     
-    def set_pos(self, x, y):
+    def set_pos(self, x, y, back):
         self.__x = x
         self.__y = y
-    
+        self.__back = back
+
     def get_pos(self):
-        return self.__x, self.__y
+        return self.__x, self.__y, self.__back
     
     def get_json_data(self):
         return {'set': self.__set, 'number': self.__number, 
-                'id': self.__id, 'x': self.__x, 'y': self.__y}
+                'id': self.__id, 'x': self.__x, 'y': self.__y, 
+                'back': self.__back}
 
 class CardStack:
     def __init__(self, players):
@@ -72,10 +75,10 @@ class CardStack:
         return card
 
     # Change the cards postion in a players stack by its id
-    def update_card_pos(self, player, card_id, x, y):
+    def update_card_pos(self, player, card_id, x, y, back):
         card = self.get_card_by_id(player, card_id)
         if card != None:
-            card.set_pos(x, y)
+            card.set_pos(x, y, back)
     
     # Return all card data for a player
     def get_stack_data(self, player):

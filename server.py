@@ -167,25 +167,39 @@ def game_started_cards():
     emit('reset_cards', data, room=game.get_name())
     print('Reset', player, 'cards')
 
+def draw_random_card(player, game):
+    cards = game.get_game()
+    card = cards.draw_card(player)
+    print('Gave player', player, 'card', card.get_id())
+    return card
+
 @socketio.on('draw_card')
 def draw_card():
     player = request.remote_addr
     game = game_manager.get_game(player)
     if game != None:
-        cards = game.get_game()
-        card = cards.draw_card(player)
+        card = draw_random_card(player, game)
         data = json.dumps({'for': player, 'card': card.get_json_data()})
         emit('give_card', data, room=game.get_name())
-        print('Gave player', player, 'card', card.get_id())
+
+@socketio.on('draw_card_down')
+def draw_card_down():
+    player = request.remote_addr
+    game = game_manager.get_game(player)
+    if game != None:
+        card = draw_random_card(player, game)
+        card.set_pos(0, 0, True)
+        data = json.dumps({'for': player, 'card': card.get_json_data()})
+        emit('give_card', data, room=game.get_name())
 
 @socketio.on('update_position')
-def update_position(card_id, x, y):
+def update_position(card_id, x, y, back):
     player = request.remote_addr
     game = game_manager.get_game(player)
     if game != None:
         cards = game.get_game()
-        cards.update_card_pos(player, card_id, x, y)
-        print('Updated card', card_id, 'position to', x, y)
+        cards.update_card_pos(player, card_id, x, y, back)
+        print('Updated card', card_id, 'position to', x, y, back)
 
 @socketio.on('give_card_to')
 def give_card_to(card_id, to):

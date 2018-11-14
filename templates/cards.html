@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Shitty Cards</title>
+        <link rel="stylesheet" type="text/css" href="static/Styles/style.css">
         <link rel="stylesheet" type="text/css" href="static/Styles/cards.css">
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
         <script>const player="{{ player }}";</script>
@@ -8,8 +9,8 @@
     </head>
 
     <body onmousemove="card_drag(event)" onmouseup="deselect_card()">
-        <h1>Shitty cards</h1>
-        <button onclick="draw_card()">Draw Card</button>
+        <button style="display: inline" onclick="draw_card()">Draw Card</button>
+        <button style="display: inline" onclick="draw_card_down()">Draw Card Face Down</button>
 
         <table class="give_area" id="give_area">
         </table>

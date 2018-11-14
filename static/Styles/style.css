@@ -28,7 +28,7 @@ body {
     text-align: left;
 }
 
-.menu button {
+button {
     background-color: #4CAF50; /* Green */
     border: none;
     color: white;
