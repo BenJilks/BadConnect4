@@ -43,11 +43,7 @@ function init()
             for (var i = 0; i < cards.length; i++)
             {
                 var card_data = cards[i];
-                var card = new_card(card_data);
-                card.style.left = card_data['x'] + 'px';
-                card.style.top = card_data['y'] + 'px';
-                card.pos_x = card_data['x'];
-                card.pos_y = card_data['y'];
+                new_card(card_data);
             }
 
             var give_area = document.getElementById('give_area');
@@ -109,6 +105,10 @@ function flip_card(card)
 function new_card(card_data)
 {
     var card = make_card(card_data['set'], card_data['number'], card_data['id']);
+    card.style.left = card_data['x'] + 'px';
+    card.style.top = card_data['y'] + 'px';
+    card.pos_x = card_data['x'];
+    card.pos_y = card_data['y'];
     if (card_data['back'])
         flip_card(card);
 
