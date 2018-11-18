@@ -5,19 +5,22 @@ class Connect4Board:
         self.__width = width
         self.__height = height
         self.__connect = connect
-        self.__grid = [[None 
-            for x in range(width)] 
-            for y in range(height)]
+        self.reset()
         self.__player_won = None
         
         # Assign player colours
-        colour_list = ['red.png', 'yellow.png', 'blue.png', 'green.png']
+        colour_list = ['orange.png', 'red.png', 'yellow.png', 'blue.png', 'green.png', 'pink.png']
         self.__players = players
         self.__colours = {}
         for player in players:
             colour = random.choice(colour_list)
             colour_list.remove(colour)
             self.__colours[player] = colour
+
+    def reset(self):
+        self.__grid = [[None 
+            for x in range(self.__width)] 
+            for y in range(self.__height)]
 
     def player_colour(self, player):
         return self.__colours[player]

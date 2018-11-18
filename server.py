@@ -98,10 +98,9 @@ def start_connect4(width, height, connect):
     width = int(width)
     height = int(height)
     connect = int(connect)
-    if not lobby.has_started():
-        print('starting connect4', lobby.get_name())
-        board = Connect4Board(lobby.get_players(), width, height, connect)
-        lobby.start_game(board)
+    print('starting connect4', lobby.get_name())
+    board = Connect4Board(lobby.get_players(), width, height, connect)
+    lobby.start_game(board)
     emit('goto_game', '/connect4', room=lobby.get_name())
 
 @socketio.on('game_started_connect4')
